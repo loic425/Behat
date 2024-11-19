@@ -3,6 +3,7 @@
 namespace Behat\Tests\Config;
 
 use Behat\Config\Config;
+use Behat\Config\Suite;
 use PHPUnit\Framework\TestCase;
 
 final class ConfigTest extends TestCase
@@ -29,5 +30,22 @@ final class ConfigTest extends TestCase
         $config = new Config($settings);
 
         $this->assertEquals($settings, $config->toArray());
+    }
+
+    public function testAddingSuites(): void
+    {
+        $config = new Config();
+        $config->withSuite(new Suite('first', ['contexts' => ['FirstContext']]));
+        $config->withSuite(new Suite('first', ['contexts' => ['FirstContext']]));
+
+        $this->assertEquals([
+            'default' => [
+                'suites' => [
+                    'first' => [
+                        'contexts' => ['FirstContext'],
+                    ],
+                ],
+            ]
+        ], $config->toArray());
     }
 }

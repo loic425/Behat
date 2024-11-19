@@ -11,6 +11,13 @@ final class Config implements ConfigInterface
     ) {
     }
 
+    public function withSuite(SuiteConfigInterface $suite): self
+    {
+        $this->settings[$suite->profile()]['suites'][$suite->name()] = $suite->toArray();
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return $this->settings;
