@@ -4,13 +4,20 @@ Feature: Extensions
   I need to be able to write simple extensions
 
   Background:
-    Given a file named "behat.yml" with:
+    Given a file named "behat.php" with:
       """
-      default:
-        extensions:
-          custom_extension.php:
-            param1: val1
-            param2: val2
+      <?php
+      use Behat\Config\Config;
+      use Behat\Config\Extension;
+
+      $config = new Config();
+      $config
+        ->withExtension(new Extension('custom_extension.php', [
+          'param1' => 'val1',
+          'param2' => 'val2'
+        ]))
+      ;
+      return $config;
       """
     And a file named "features/bootstrap/FeatureContext.php" with:
       """

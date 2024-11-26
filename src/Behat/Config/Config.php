@@ -11,6 +11,13 @@ final class Config implements ConfigInterface
     ) {
     }
 
+    public function withExtension(ExtensionInterface $extension): self
+    {
+        $this->settings[$extension->profile()]['extensions'][$extension->name()] = $extension->toArray();
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return $this->settings;
