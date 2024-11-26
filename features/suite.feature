@@ -54,7 +54,6 @@ Feature: Suites
 
       use Behat\Config\Config;
       use Behat\Config\Suite;
-      use Behat\Testwork\Suite\GenericSuite;
 
       $config = new Config();
       $config
