@@ -200,7 +200,13 @@ final class ConfigurationLoader
         $basePath = rtrim(dirname($configPath), DIRECTORY_SEPARATOR);
 
         if (str_ends_with($configPath, '.php')) {
-            $config = $this->getPHPConfigObject($configPath)->toArray();
+            $phpConfig = $this->getPHPConfigObjectClosure($configPath)();
+
+            if (!$phpConfig instanceof ConfigInterface) {
+                throw new ConfigurationLoadingException(sprintf('Configuration file `%s` must return an instance of `%s`.', $configPath, ConfigInterface::class));
+            }
+
+            $config = $phpConfig->toArray();
         } else {
             $config = (array) Yaml::parse(file_get_contents($configPath));
         }
@@ -208,15 +214,18 @@ final class ConfigurationLoader
         return $this->loadConfigs($basePath, $config, $profile);
     }
 
-    private function getPHPConfigObject(string $configPath): ConfigInterface
+    /**
+     * Scope isolated include.
+     *
+     * Prevents access to $this/self from included files.
+     */
+    private function getPHPConfigObjectClosure(string $configPath): \Closure
     {
-        $config = require $configPath;
+        return \Closure::bind(function () use ($configPath): mixed {
+            $config = require $configPath;
 
-        if (!$config instanceof ConfigInterface) {
-            throw new ConfigurationLoadingException(sprintf('Configuration file `%s` must return an instance of `%s`.', $configPath, ConfigInterface::class));
-        }
-
-        return $config;
+            return $config;
+        }, null, null);
     }
 
     /**
