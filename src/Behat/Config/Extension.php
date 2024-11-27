@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Behat\Config;
 
-final class Profile implements ProfileInterface
+final class Extension implements ExtensionInterface
 {
     public function __construct(
         private string $name,
-        private array $settings = []
+        private array $settings = [],
+        private string $profile = 'default',
     ) {
     }
 
@@ -17,11 +18,9 @@ final class Profile implements ProfileInterface
         return $this->name;
     }
 
-    public function withExtension(ExtensionInterface $extension): self
+    public function profile(): string
     {
-        $this->settings['extensions'][$extension->name()] = $extension->toArray();
-
-        return $this;
+        return $this->profile;
     }
 
     public function toArray(): array
