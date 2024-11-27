@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace Behat\Config;
 
-final class Config implements ConfigInterface
+final class Profile implements ProfileInterface
 {
     public function __construct(
+        private string $name,
         private array $settings = []
     ) {
     }
 
-    public function withProfile(ProfileInterface $profile): self
+    public function name(): string
     {
-        $this->settings[$profile->name()] = $profile->toArray();
-
-        return $this;
+        return $this->name;
     }
 
     public function toArray(): array
