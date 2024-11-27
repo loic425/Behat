@@ -200,17 +200,23 @@ final class ConfigurationLoader
         $basePath = rtrim(dirname($configPath), DIRECTORY_SEPARATOR);
 
         if (str_ends_with($configPath, '.php')) {
-            $phpConfig = require $configPath;
-            if (!$phpConfig instanceof ConfigInterface) {
-                throw new ConfigurationLoadingException(sprintf('Configuration file `%s` must return an instance of `%s`.', $configPath, ConfigInterface::class));
-            }
-
-            $config = $phpConfig->toArray();
+            $config = $this->getPHPConfigObject($configPath)->toArray();
         } else {
             $config = (array) Yaml::parse(file_get_contents($configPath));
         }
 
         return $this->loadConfigs($basePath, $config, $profile);
+    }
+
+    private function getPHPConfigObject(string $configPath): ConfigInterface
+    {
+        $config = require $configPath;
+
+        if (!$config instanceof ConfigInterface) {
+            throw new ConfigurationLoadingException(sprintf('Configuration file `%s` must return an instance of `%s`.', $configPath, ConfigInterface::class));
+        }
+
+        return $config;
     }
 
     /**

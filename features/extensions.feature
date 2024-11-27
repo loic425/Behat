@@ -11,15 +11,17 @@ Feature: Extensions
       use Behat\Config\Config;
       use Behat\Config\Profile;
 
-      $config = new Config();
-      $config->withProfile(new Profile('default', [
+      $profile = new Profile('default', [
         'extensions' => [
           'custom_extension.php' => [
             'param1' => 'val1',
             'param2' => 'val2',
           ],
         ],
-      ]));
+      ]);
+
+      $config = new Config();
+      $config->withProfile($profile);
 
       return $config;
       """
